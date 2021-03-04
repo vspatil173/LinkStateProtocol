@@ -1,11 +1,10 @@
 package com.cmu.networks.helper;
 
 import com.cmu.networks.config.SharedResources;
+import com.cmu.networks.models.Peer;
 import com.cmu.networks.models.ServerConfig;
 
 import java.io.*;
-import java.net.URI;
-import java.net.URL;
 import java.util.*;
 
 public class ConfigFileIO {
@@ -73,5 +72,20 @@ public class ConfigFileIO {
                 writer.close();
             } catch (IOException e) { e.printStackTrace(); }
         }
+    }
+
+
+    public static int addNeighbor(String input){
+        String[] paras = input.split(" ");
+        String uuid = paras[1].split("=")[1];
+        String host = paras[2].split("=")[1];
+        int backend_port = Integer.parseInt(paras[3].split("=")[1].trim());
+        int distance = Integer.parseInt(paras[4].split("=")[1].trim());
+        String pid = Constants.PEER_PREFIX+(SharedResources.getServerConfig().getPeer_count()+1);
+        Peer curPeer = new Peer(pid,uuid,host,backend_port,distance);
+        SharedResources.getServerConfig().addPeer(curPeer);
+
+        ConfigFileIO.writeToFileConfig(SharedResources.getServerConfig());
+        return SharedResources.getServerConfig().getPeer_count();
     }
 }

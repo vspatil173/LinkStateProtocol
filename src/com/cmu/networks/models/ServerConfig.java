@@ -10,9 +10,7 @@ public class ServerConfig {
     int peer_count;
     List<Peer> peers;
 
-    public ServerConfig() {
-        peers = new LinkedList<>();
-    }
+    public ServerConfig() { peers = new LinkedList<>(); }
 
     public ServerConfig(String uuid, String hostName, int backendPort) {
         this.uuid = uuid;
@@ -29,45 +27,25 @@ public class ServerConfig {
         this.peers = peers;
     }
 
-    public String getUuid() {
-        return uuid;
-    }
+    public String getUuid() { return uuid; }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
+    public void setUuid(String uuid) { this.uuid = uuid;}
 
-    public String getHostName() {
-        return hostName;
-    }
+    public String getHostName() { return hostName; }
 
-    public void setHostName(String hostName) {
-        this.hostName = hostName;
-    }
+    public void setHostName(String hostName) { this.hostName = hostName;}
 
-    public int getBackendPort() {
-        return backendPort;
-    }
+    public int getBackendPort() { return backendPort; }
 
-    public void setBackendPort(int backendPort) {
-        this.backendPort = backendPort;
-    }
+    public void setBackendPort(int backendPort) { this.backendPort = backendPort;}
 
-    public int getPeer_count() {
-        return peer_count;
-    }
+    public int getPeer_count() { return peer_count; }
 
-    public void setPeer_count(int peer_count) {
-        this.peer_count = peer_count;
-    }
+    public void setPeer_count(int peer_count) { this.peer_count = peer_count; }
 
-    public List<Peer> getPeers() {
-        return peers;
-    }
+    public List<Peer> getPeers() { return peers; }
 
-    public void setPeers(List<Peer> peers) {
-        this.peers = peers;
-    }
+    public void setPeers(List<Peer> peers) { this.peers = peers; }
 
     public void addPeerFromString(String parameters){
         String[] splits = parameters.split(" = ");
@@ -99,5 +77,10 @@ public class ServerConfig {
             str.append("{\"uuid\":\"").append(peer.uuid).append("\",").append("\"name\":\"").append(peer.pid).append("\",").append("\"host\":\"").append(peer.ip).append("\",").append("\"backend_port\":\"").append(peer.port).append("\",").append("\"metric\":\"").append(peer.distance).append("\"},");
         }
         return str.substring(0,str.length()-1)+"]";
+    }
+
+    public void addPeer(Peer peer){
+        peers.add(peer);
+        peer_count = peers.size();
     }
 }
