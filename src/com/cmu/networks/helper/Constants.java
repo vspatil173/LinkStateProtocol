@@ -12,5 +12,6 @@ public class Constants {
     public static final String CMD_NEIGHBORS="neighbors";
     public static final String CMD_ADD_NEIGHBOR="addneighbor";
     public static final String CMD_NETSTAT="netstat";
+    public static final String CMD_KILL="kill";
 
 }

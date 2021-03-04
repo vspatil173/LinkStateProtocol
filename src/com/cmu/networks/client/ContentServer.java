@@ -2,8 +2,8 @@ package com.cmu.networks.client;
 
 import com.cmu.networks.config.SharedResources;
 import com.cmu.networks.helper.ConfigFileIO;
-import com.cmu.networks.models.ServerConfig;
 import com.cmu.networks.services.CommandLineService;
+import com.cmu.networks.services.HeartBeatService;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,8 +19,11 @@ public class ContentServer {
             SharedResources.setServerConfig(ConfigFileIO.parseFileToConfig());
             ConfigFileIO.writeToFileConfig(SharedResources.getServerConfig());
 
-            Thread commandLine = new Thread( new CommandLineService());
-            commandLine.start();
+            SharedResources.setCommandLineService(new CommandLineService());
+            new Thread(SharedResources.getCommandLineService()).start();
+
+            SharedResources.setHeartBeatService(new HeartBeatService());
+            new Thread(SharedResources.getHeartBeatService()).start();
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -7,11 +7,12 @@ import com.cmu.networks.helper.Constants;
 import java.util.Scanner;
 
 public class CommandLineService implements Runnable{
+    boolean isRunning = true;
     @Override
     public void run() {
         Scanner sc = new Scanner(System.in);
         String inputLine;
-        while(true){
+        while(isRunning){
             inputLine = sc.nextLine();
             if(inputLine.startsWith(Constants.CMD_UUID)){
                 System.out.println(SharedResources.getServerConfig().getUuid());
@@ -22,6 +23,19 @@ public class CommandLineService implements Runnable{
             }else if(inputLine.startsWith(Constants.CMD_NETSTAT)){
                 System.out.println(SharedResources.getServerConfig());
             }
+            else if(inputLine.startsWith(Constants.CMD_KILL)){
+                System.out.println("Shutting down node");
+                ((HeartBeatService)SharedResources.getHeartBeatService()).killService();
+                System.out.println("node state saved and shutdown completed");
+                killService();
+            }
+            else{
+                System.out.println("invalid command :"+inputLine);
+            }
         }
+    }
+
+    public void killService(){
+        isRunning = false;
     }
 }
