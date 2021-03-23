@@ -1,0 +1,23 @@
+<project default="compile">
+	
+	<property name="linkstateprotocol.output.dir" value="${basedir}"/>
+	
+	<path id="linkstateprotocol.module.classpath">
+		<pathelement location="${basedir}/lib/json-20210307.jar"/>
+		<pathelement location="${basedir}/lib/jackson-databind-2.12.2.jar"/>
+		<pathelement location="${basedir}/lib/jackson-annotations-2.12.2.jar"/>
+		<pathelement location="${basedir}/lib/jackson-core-2.12.2.jar"/>
+	</path>
+	
+    <target name="clean"/>
+    <target name="compile">
+        <mkdir dir="${linkstateprotocol.output.dir}"/>
+        <javac srcdir="src" destdir="${linkstateprotocol.output.dir}">
+			<classpath refid="linkstateprotocol.module.classpath"/>
+		</javac>
+
+		<copy todir="${linkstateprotocol.output.dir}/edu/cmu/ece/lib/">
+			<fileset dir="${basedir}/lib"/>
+		</copy>
+    </target>
+</project>

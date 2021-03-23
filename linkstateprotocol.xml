@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="linkstateprotocol" default="all">
+  
+  
+  <property file="linkstateprotocol.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.egg"/>
+    <include name="*.zip"/>
+    <include name="*.war"/>
+    <include name="*.swc"/>
+    <include name="*.ear"/>
+    <include name="*.jar"/>
+    <include name="*.klib"/>
+    <include name="*.ane"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.15" value="${jdk.home.15}/bin"/>
+  <path id="jdk.classpath.15">
+    <fileset dir="${jdk.home.15}">
+      <include name="../jdk-15.0.1!/java.base"/>
+      <include name="../jdk-15.0.1!/java.compiler"/>
+      <include name="../jdk-15.0.1!/java.datatransfer"/>
+      <include name="../jdk-15.0.1!/java.desktop"/>
+      <include name="../jdk-15.0.1!/java.instrument"/>
+      <include name="../jdk-15.0.1!/java.logging"/>
+      <include name="../jdk-15.0.1!/java.management"/>
+      <include name="../jdk-15.0.1!/java.management.rmi"/>
+      <include name="../jdk-15.0.1!/java.naming"/>
+      <include name="../jdk-15.0.1!/java.net.http"/>
+      <include name="../jdk-15.0.1!/java.prefs"/>
+      <include name="../jdk-15.0.1!/java.rmi"/>
+      <include name="../jdk-15.0.1!/java.scripting"/>
+      <include name="../jdk-15.0.1!/java.se"/>
+      <include name="../jdk-15.0.1!/java.security.jgss"/>
+      <include name="../jdk-15.0.1!/java.security.sasl"/>
+      <include name="../jdk-15.0.1!/java.smartcardio"/>
+      <include name="../jdk-15.0.1!/java.sql"/>
+      <include name="../jdk-15.0.1!/java.sql.rowset"/>
+      <include name="../jdk-15.0.1!/java.transaction.xa"/>
+      <include name="../jdk-15.0.1!/java.xml"/>
+      <include name="../jdk-15.0.1!/java.xml.crypto"/>
+      <include name="../jdk-15.0.1!/jdk.accessibility"/>
+      <include name="../jdk-15.0.1!/jdk.aot"/>
+      <include name="../jdk-15.0.1!/jdk.attach"/>
+      <include name="../jdk-15.0.1!/jdk.charsets"/>
+      <include name="../jdk-15.0.1!/jdk.compiler"/>
+      <include name="../jdk-15.0.1!/jdk.crypto.cryptoki"/>
+      <include name="../jdk-15.0.1!/jdk.crypto.ec"/>
+      <include name="../jdk-15.0.1!/jdk.crypto.mscapi"/>
+      <include name="../jdk-15.0.1!/jdk.dynalink"/>
+      <include name="../jdk-15.0.1!/jdk.editpad"/>
+      <include name="../jdk-15.0.1!/jdk.hotspot.agent"/>
+      <include name="../jdk-15.0.1!/jdk.httpserver"/>
+      <include name="../jdk-15.0.1!/jdk.incubator.foreign"/>
+      <include name="../jdk-15.0.1!/jdk.incubator.jpackage"/>
+      <include name="../jdk-15.0.1!/jdk.internal.ed"/>
+      <include name="../jdk-15.0.1!/jdk.internal.jvmstat"/>
+      <include name="../jdk-15.0.1!/jdk.internal.le"/>
+      <include name="../jdk-15.0.1!/jdk.internal.opt"/>
+      <include name="../jdk-15.0.1!/jdk.internal.vm.ci"/>
+      <include name="../jdk-15.0.1!/jdk.internal.vm.compiler"/>
+      <include name="../jdk-15.0.1!/jdk.internal.vm.compiler.management"/>
+      <include name="../jdk-15.0.1!/jdk.jartool"/>
+      <include name="../jdk-15.0.1!/jdk.javadoc"/>
+      <include name="../jdk-15.0.1!/jdk.jcmd"/>
+      <include name="../jdk-15.0.1!/jdk.jconsole"/>
+      <include name="../jdk-15.0.1!/jdk.jdeps"/>
+      <include name="../jdk-15.0.1!/jdk.jdi"/>
+      <include name="../jdk-15.0.1!/jdk.jdwp.agent"/>
+      <include name="../jdk-15.0.1!/jdk.jfr"/>
+      <include name="../jdk-15.0.1!/jdk.jlink"/>
+      <include name="../jdk-15.0.1!/jdk.jshell"/>
+      <include name="../jdk-15.0.1!/jdk.jsobject"/>
+      <include name="../jdk-15.0.1!/jdk.jstatd"/>
+      <include name="../jdk-15.0.1!/jdk.localedata"/>
+      <include name="../jdk-15.0.1!/jdk.management"/>
+      <include name="../jdk-15.0.1!/jdk.management.agent"/>
+      <include name="../jdk-15.0.1!/jdk.management.jfr"/>
+      <include name="../jdk-15.0.1!/jdk.naming.dns"/>
+      <include name="../jdk-15.0.1!/jdk.naming.rmi"/>
+      <include name="../jdk-15.0.1!/jdk.net"/>
+      <include name="../jdk-15.0.1!/jdk.nio.mapmode"/>
+      <include name="../jdk-15.0.1!/jdk.sctp"/>
+      <include name="../jdk-15.0.1!/jdk.security.auth"/>
+      <include name="../jdk-15.0.1!/jdk.security.jgss"/>
+      <include name="../jdk-15.0.1!/jdk.unsupported"/>
+      <include name="../jdk-15.0.1!/jdk.unsupported.desktop"/>
+      <include name="../jdk-15.0.1!/jdk.xml.dom"/>
+      <include name="../jdk-15.0.1!/jdk.zipfs"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.15}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.15}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.15"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.lib.classpath">
+    <pathelement location="${basedir}/edu/cmu/ece/lib/jackson-annotations-2.12.2.jar"/>
+    <pathelement location="${basedir}/edu/cmu/ece/lib/jackson-core-2.12.2.jar"/>
+    <pathelement location="${basedir}/edu/cmu/ece/lib/jackson-databind-2.12.2.jar"/>
+    <pathelement location="${basedir}/edu/cmu/ece/lib/json-20210307.jar"/>
+  </path>
+  
+  <path id="library.lib1.classpath">
+    <pathelement location="${basedir}/lib/jackson-annotations-2.12.2.jar"/>
+    <pathelement location="${basedir}/lib/jackson-core-2.12.2.jar"/>
+    <pathelement location="${basedir}/lib/jackson-databind-2.12.2.jar"/>
+    <pathelement location="${basedir}/lib/json-20210307.jar"/>
+  </path>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module LinkStateProtocol -->
+  
+  <dirname property="module.linkstateprotocol.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.linkstateprotocol" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.linkstateprotocol" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.linkstateprotocol" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.linkstateprotocol" value="-encoding UTF-8 -source 15 -target 15 ${compiler.args}"/>
+  
+  <property name="linkstateprotocol.output.dir" value="${module.linkstateprotocol.basedir}/out/production/LinkStateProtocol"/>
+  <property name="linkstateprotocol.testoutput.dir" value="${module.linkstateprotocol.basedir}/out/test/LinkStateProtocol"/>
+  
+  <path id="linkstateprotocol.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="linkstateprotocol.module.production.classpath">
+    <path refid="${module.jdk.classpath.linkstateprotocol}"/>
+    <path refid="library.lib1.classpath"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="linkstateprotocol.runtime.production.module.classpath">
+    <pathelement location="${linkstateprotocol.output.dir}"/>
+    <path refid="library.lib1.classpath"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="linkstateprotocol.module.classpath">
+    <path refid="${module.jdk.classpath.linkstateprotocol}"/>
+    <pathelement location="${linkstateprotocol.output.dir}"/>
+    <path refid="library.lib1.classpath"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  <path id="linkstateprotocol.runtime.module.classpath">
+    <pathelement location="${linkstateprotocol.testoutput.dir}"/>
+    <pathelement location="${linkstateprotocol.output.dir}"/>
+    <path refid="library.lib1.classpath"/>
+    <path refid="library.lib.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.linkstateprotocol">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.linkstateprotocol">
+    <patternset refid="excluded.from.module.linkstateprotocol"/>
+  </patternset>
+  
+  <path id="linkstateprotocol.module.sourcepath">
+    <dirset dir="${module.linkstateprotocol.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.linkstateprotocol" depends="compile.module.linkstateprotocol.production,compile.module.linkstateprotocol.tests" description="Compile module LinkStateProtocol"/>
+  
+  <target name="compile.module.linkstateprotocol.production" description="Compile module LinkStateProtocol; production classes">
+    <mkdir dir="${linkstateprotocol.output.dir}"/>
+    <javac destdir="${linkstateprotocol.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.linkstateprotocol}/javac">
+      <compilerarg line="${compiler.args.linkstateprotocol}"/>
+      <bootclasspath refid="linkstateprotocol.module.bootclasspath"/>
+      <classpath refid="linkstateprotocol.module.production.classpath"/>
+      <src refid="linkstateprotocol.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.linkstateprotocol"/>
+    </javac>
+    
+    <copy todir="${linkstateprotocol.output.dir}">
+      <fileset dir="${module.linkstateprotocol.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.linkstateprotocol.tests" depends="compile.module.linkstateprotocol.production" description="compile module LinkStateProtocol; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.linkstateprotocol" description="cleanup module">
+    <delete dir="${linkstateprotocol.output.dir}"/>
+    <delete dir="${linkstateprotocol.testoutput.dir}"/>
+  </target>
+  
+  
+  <!-- Module submission -->
+  
+  <dirname property="module.submission.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.submission" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.submission" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.submission" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.submission" value="-encoding UTF-8 -source 15 -target 15 ${compiler.args}"/>
+  
+  <property name="submission.output.dir" value="${module.submission.basedir}/out/production/submission"/>
+  <property name="submission.testoutput.dir" value="${module.submission.basedir}/out/test/submission"/>
+  
+  <path id="submission.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="submission.module.production.classpath">
+    <path refid="${module.jdk.classpath.submission}"/>
+  </path>
+  
+  <path id="submission.runtime.production.module.classpath">
+    <pathelement location="${submission.output.dir}"/>
+  </path>
+  
+  <path id="submission.module.classpath">
+    <path refid="${module.jdk.classpath.submission}"/>
+    <pathelement location="${submission.output.dir}"/>
+  </path>
+  
+  <path id="submission.runtime.module.classpath">
+    <pathelement location="${submission.testoutput.dir}"/>
+    <pathelement location="${submission.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.submission">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.submission">
+    <patternset refid="excluded.from.module.submission"/>
+  </patternset>
+  
+  <path id="submission.module.sourcepath">
+    <dirset dir="${module.submission.basedir}/submission">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.submission" depends="compile.module.submission.production,compile.module.submission.tests" description="Compile module submission"/>
+  
+  <target name="compile.module.submission.production" description="Compile module submission; production classes">
+    <mkdir dir="${submission.output.dir}"/>
+    <javac destdir="${submission.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.submission}/javac">
+      <compilerarg line="${compiler.args.submission}"/>
+      <bootclasspath refid="submission.module.bootclasspath"/>
+      <classpath refid="submission.module.production.classpath"/>
+      <src refid="submission.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.submission"/>
+    </javac>
+    
+    <copy todir="${submission.output.dir}">
+      <fileset dir="${module.submission.basedir}/submission/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.submission.tests" depends="compile.module.submission.production" description="compile module submission; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.submission" description="cleanup module">
+    <delete dir="${submission.output.dir}"/>
+    <delete dir="${submission.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.linkstateprotocol, clean.module.submission" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.linkstateprotocol, compile.module.submission" description="build all modules"/>
+  
+  <target name="all" depends="build.modules" description="build all"/>
+</project>
