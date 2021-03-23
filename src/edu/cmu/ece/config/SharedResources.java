@@ -1,6 +1,6 @@
-package com.cmu.networks.config;
+package edu.cmu.ece.config;
 
-import com.cmu.networks.models.ServerConfig;
+import edu.cmu.ece.models.ServerConfig;
 
 import java.io.File;
 
@@ -9,6 +9,7 @@ public class SharedResources {
     public static File configFile;
     public static Runnable commandLineService;
     public static Runnable heartBeatService;
+    public static Runnable linkStateBroadcasterService;
 
     public static ServerConfig getServerConfig() { return serverConfig; }
     public static void setServerConfig(ServerConfig serverConfig) { SharedResources.serverConfig = serverConfig; }
@@ -21,4 +22,7 @@ public class SharedResources {
 
     public static Runnable getHeartBeatService() { return heartBeatService; }
     public static void setHeartBeatService(Runnable heartBeatService) { SharedResources.heartBeatService = heartBeatService; }
+
+    public static Runnable getLinkStateBroadcasterService() { return linkStateBroadcasterService; }
+    public static void setLinkStateBroadcasterService(Runnable linkStateBroadcasterService) { SharedResources.linkStateBroadcasterService = linkStateBroadcasterService; }
 }

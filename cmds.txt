@@ -1,0 +1,22 @@
+instance 1:b38c20d2-8eb4-498b-a22a-d618409fc962
+addneighbor uuid=302cf1eb-4fd2-47d6-b695-0072a0f18115 host=localhost backend_port=18346 metric=10
+addneighbor uuid=010b9aa7-c452-4a27-ac31-68e15c0f9c24 host=ece002.ece.local.cmu.edu backend_port=18346 metric=30
+addneighbor uuid=27ded387-158a-440c-ae78-39704b393538 host=localhost backend_port=18377 metric=10
+
+intellij :302cf1eb-4fd2-47d6-b695-0072a0f18115
+addneighbor uuid=b38c20d2-8eb4-498b-a22a-d618409fc962 host=localhost backend_port=18375 metric=10
+addneighbor uuid=010b9aa7-c452-4a27-ac31-68e15c0f9c24 host=ece002.ece.local.cmu.edu backend_port=18375 metric=30
+addneighbor uuid=27ded387-158a-440c-ae78-39704b393538 host=localhost backend_port=18377 metric=10
+
+instance 2 :27ded387-158a-440c-ae78-39704b393538
+addneighbor uuid=b38c20d2-8eb4-498b-a22a-d618409fc962 host=localhost backend_port=18375 metric=10
+addneighbor uuid=010b9aa7-c452-4a27-ac31-68e15c0f9c24 host=ece002.ece.local.cmu.edu backend_port=18375 metric=30
+addneighbor uuid=302cf1eb-4fd2-47d6-b695-0072a0f18115 host=localhost backend_port=18346 metric=10
+
+server:010b9aa7-c452-4a27-ac31-68e15c0f9c24
+addneighbor uuid=302cf1eb-4fd2-47d6-b695-0072a0f18115 host=192.168.0.10 backend_port=18346 metric=30
+addneighbor uuid=b38c20d2-8eb4-498b-a22a-d618409fc962 host=192.168.0.10 backend_port=18375 metric=30
+addneighbor uuid=27ded387-158a-440c-ae78-39704b393538 host=localhost backend_port=18377 metric=10
+
+scp edu.zip vspatil@ece002.ece.local.cmu.edu:~/projects/linkstate/
+ssh vspatil@ece002.ece.local.cmu.edu

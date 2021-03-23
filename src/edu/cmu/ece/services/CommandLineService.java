@@ -1,8 +1,8 @@
-package com.cmu.networks.services;
+package edu.cmu.ece.services;
 
-import com.cmu.networks.config.SharedResources;
-import com.cmu.networks.helper.ConfigFileIO;
-import com.cmu.networks.helper.Constants;
+import edu.cmu.ece.config.SharedResources;
+import edu.cmu.ece.helper.ConfigFileIO;
+import edu.cmu.ece.helper.Constants;
 
 import java.util.Scanner;
 
@@ -19,7 +19,11 @@ public class CommandLineService implements Runnable{
             }else if(inputLine.startsWith(Constants.CMD_NEIGHBORS)){
                 System.out.println(SharedResources.getServerConfig().printListOfNeighbor());
             }else if(inputLine.startsWith(Constants.CMD_ADD_NEIGHBOR)){
-                System.out.println(ConfigFileIO.addNeighbor(inputLine));
+                boolean isNeighborAdded = ConfigFileIO.addNeighbor(inputLine);
+                if(isNeighborAdded)
+                    System.out.println("neighbor added");
+                else
+                    System.out.println("Failure: adding neighbor - invalid syntax or duplicate entry found");
             }else if(inputLine.startsWith(Constants.CMD_NETSTAT)){
                 System.out.println(SharedResources.getServerConfig());
             }

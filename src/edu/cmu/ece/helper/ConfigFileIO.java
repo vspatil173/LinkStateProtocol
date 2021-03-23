@@ -1,11 +1,13 @@
-package com.cmu.networks.helper;
+package edu.cmu.ece.helper;
 
-import com.cmu.networks.config.SharedResources;
-import com.cmu.networks.models.Peer;
-import com.cmu.networks.models.ServerConfig;
+import edu.cmu.ece.config.SharedResources;
+import edu.cmu.ece.models.LinkStateMessage;
+import edu.cmu.ece.models.Peer;
+import edu.cmu.ece.models.ServerConfig;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ConfigFileIO {
 
@@ -52,7 +54,7 @@ public class ConfigFileIO {
                 config.addPeerFromString(s);
             }
         }
-
+        config.setLinkStateMessage(generateLinkStateMessage(config));
         System.out.println(config);
         return config;
     }
@@ -75,17 +77,49 @@ public class ConfigFileIO {
     }
 
 
-    public static int addNeighbor(String input){
-        String[] paras = input.split(" ");
-        String uuid = paras[1].split("=")[1];
-        String host = paras[2].split("=")[1];
-        int backend_port = Integer.parseInt(paras[3].split("=")[1].trim());
-        int distance = Integer.parseInt(paras[4].split("=")[1].trim());
-        String pid = Constants.PEER_PREFIX+(SharedResources.getServerConfig().getPeer_count()+1);
-        Peer curPeer = new Peer(pid,uuid,host,backend_port,distance);
-        SharedResources.getServerConfig().addPeer(curPeer);
+    public static boolean addNeighbor(String input){
+        Map<String,String> paraMaps = new HashMap<>();
+        for(String paras : input.split(" ")) {
+            if(paras.equals("addneighbor")) continue;
+            paraMaps.put(paras.split("=")[0],paras.split("=")[1]);
+        }
 
-        ConfigFileIO.writeToFileConfig(SharedResources.getServerConfig());
-        return SharedResources.getServerConfig().getPeer_count();
+        String pid = Constants.PEER_PREFIX+(SharedResources.getServerConfig().getPeer_count()+1);
+        if(paraMaps.containsKey(Constants.UUID) && paraMaps.containsKey(Constants.HOST) &&
+                paraMaps.containsKey(Constants.PORT) && paraMaps.containsKey(Constants.METRIC)){
+
+            Peer curPeer = new Peer(pid,paraMaps.get(Constants.UUID),
+                    paraMaps.get(Constants.HOST),Integer.parseInt(paraMaps.get(Constants.PORT)),
+                    Integer.parseInt(paraMaps.get(Constants.METRIC)));
+
+            if(checkForDuplicatePeer(curPeer)){
+                return false;
+            }
+            SharedResources.getServerConfig().addPeer(curPeer);
+            ConfigFileIO.writeToFileConfig(SharedResources.getServerConfig());
+        }else{
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean checkForDuplicatePeer(Peer curPeer) {
+
+        Peer duplicateRecord = SharedResources.getServerConfig().getPeers().stream()
+                .filter(peer -> peer.getUuid().equals(curPeer.getUuid())).findFirst().orElse(null);
+        return duplicateRecord != null;
+    }
+
+    private static LinkStateMessage generateLinkStateMessage(ServerConfig config){
+        String nodeName = config.getHostName();
+        LinkStateMessage linkStateMessage = new LinkStateMessage(nodeName);
+        config.getPeers().forEach(peer -> {
+            linkStateMessage.addDistanceVectorDataForNode(
+                    nodeName,
+                    peer.getUuid(),
+                    peer.getDistance()
+            );
+        });
+        return  linkStateMessage;
     }
 }

@@ -1,7 +1,9 @@
-package com.cmu.networks.models;
+package edu.cmu.ece.models;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServerConfig {
     String uuid;
@@ -9,17 +11,24 @@ public class ServerConfig {
     int backendPort;
     int peer_count;
     List<Peer> peers;
+    HashMap<String,Long> peerToSeqMap;
+    LinkStateMessage linkStateMessage;
 
-    public ServerConfig() { peers = new LinkedList<>(); }
+    public ServerConfig() {
+        peers = new LinkedList<>();
+        peerToSeqMap = new HashMap<>();
+        linkStateMessage = new LinkStateMessage();
+    }
 
     public ServerConfig(String uuid, String hostName, int backendPort) {
+        this();
         this.uuid = uuid;
         this.hostName = hostName;
         this.backendPort = backendPort;
-        peers = new LinkedList<>();
     }
 
     public ServerConfig(String uuid, String hostName, int backendPort, int peer_count, List<Peer> peers) {
+        this();
         this.uuid = uuid;
         this.hostName = hostName;
         this.backendPort = backendPort;
@@ -74,6 +83,7 @@ public class ServerConfig {
     public String printListOfNeighbor(){
         StringBuilder str = new StringBuilder("[");
         for (Peer peer : peers) {
+            if(!peer.isActive()) continue;
             str.append("{\"uuid\":\"").append(peer.uuid).append("\",").append("\"name\":\"").append(peer.pid).append("\",").append("\"host\":\"").append(peer.ip).append("\",").append("\"backend_port\":\"").append(peer.port).append("\",").append("\"metric\":\"").append(peer.distance).append("\"},");
         }
         return str.substring(0,str.length()-1)+"]";
@@ -83,4 +93,10 @@ public class ServerConfig {
         peers.add(peer);
         peer_count = peers.size();
     }
+
+    public HashMap<String, Long> getPeerToSeqMap() { return peerToSeqMap; }
+    public void setPeerToSeqMap(HashMap<String, Long> peerToSeqMap) { this.peerToSeqMap = peerToSeqMap; }
+
+    public LinkStateMessage getLinkStateMessage() { return linkStateMessage; }
+    public void setLinkStateMessage(LinkStateMessage linkStateMessage) { this.linkStateMessage = linkStateMessage; }
 }

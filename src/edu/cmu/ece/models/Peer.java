@@ -1,4 +1,4 @@
-package com.cmu.networks.models;
+package edu.cmu.ece.models;
 
 public class Peer {
     String pid;
@@ -6,8 +6,9 @@ public class Peer {
     String ip;
     int port;
     int distance;
-
+    boolean isActive;
     public Peer() {
+        isActive = true;
     }
 
     public Peer(String pid, String uuid, String ip, int port, int distance) {
@@ -16,6 +17,7 @@ public class Peer {
         this.ip = ip;
         this.port = port;
         this.distance = distance;
+        isActive = true;
     }
 
     @Override
@@ -63,4 +65,7 @@ public class Peer {
         this.distance = distance;
     }
 
+    public boolean isActive() { return isActive; }
+
+    public void setActive(boolean active) { isActive = active; }
 }
