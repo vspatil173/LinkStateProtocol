@@ -138,17 +138,17 @@
   <!-- Project Libraries -->
   
   <path id="library.lib.classpath">
-    <pathelement location="${basedir}/edu/cmu/ece/lib/jackson-annotations-2.12.2.jar"/>
-    <pathelement location="${basedir}/edu/cmu/ece/lib/jackson-core-2.12.2.jar"/>
-    <pathelement location="${basedir}/edu/cmu/ece/lib/jackson-databind-2.12.2.jar"/>
-    <pathelement location="${basedir}/edu/cmu/ece/lib/json-20210307.jar"/>
+    <pathelement location="/edu/cmu/ece/lib/jackson-annotations-2.12.2.jar"/>
+    <pathelement location="/edu/cmu/ece/lib/jackson-core-2.12.2.jar"/>
+    <pathelement location="/edu/cmu/ece/lib/jackson-databind-2.12.2.jar"/>
+    <pathelement location="/edu/cmu/ece/lib/json-20210307.jar"/>
   </path>
   
   <path id="library.lib1.classpath">
-    <pathelement location="${basedir}/lib/jackson-annotations-2.12.2.jar"/>
-    <pathelement location="${basedir}/lib/jackson-core-2.12.2.jar"/>
-    <pathelement location="${basedir}/lib/jackson-databind-2.12.2.jar"/>
-    <pathelement location="${basedir}/lib/json-20210307.jar"/>
+    <pathelement location="/lib/jackson-annotations-2.12.2.jar"/>
+    <pathelement location="/lib/jackson-core-2.12.2.jar"/>
+    <pathelement location="/lib/jackson-databind-2.12.2.jar"/>
+    <pathelement location="/lib/json-20210307.jar"/>
   </path>
   
   <!-- Modules -->
@@ -156,7 +156,7 @@
   
   <!-- Module LinkStateProtocol -->
   
-  <dirname property="module.linkstateprotocol.basedir" file="${ant.file}"/>
+  <dirname property="module.linkstateprotocol.basedir" file="/extras/linkstateprotocol.xml"/>
   
   
   <property name="module.jdk.home.linkstateprotocol" value="${project.jdk.home}"/>
@@ -208,7 +208,7 @@
   </patternset>
   
   <path id="linkstateprotocol.module.sourcepath">
-    <dirset dir="${module.linkstateprotocol.basedir}">
+    <dirset dir="/">
       <include name="src"/>
     </dirset>
   </path>
@@ -227,7 +227,7 @@
     </javac>
     
     <copy todir="${linkstateprotocol.output.dir}">
-      <fileset dir="${module.linkstateprotocol.basedir}/src">
+      <fileset dir="/">
         <patternset refid="compiler.resources"/>
         <type type="file"/>
       </fileset>
@@ -244,7 +244,7 @@
   
   <!-- Module submission -->
   
-  <dirname property="module.submission.basedir" file="${ant.file}"/>
+  <dirname property="module.submission.basedir" file="/extras/linkstateprotocol.xml"/>
   
   
   <property name="module.jdk.home.submission" value="${project.jdk.home}"/>

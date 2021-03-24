@@ -3,6 +3,7 @@ package edu.cmu.ece.models;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServerConfig {
@@ -11,6 +12,7 @@ public class ServerConfig {
     int backendPort;
     int peer_count;
     List<Peer> peers;
+    HashMap<String,String> uuidToAlias;
     HashMap<String,Long> peerToSeqMap;
     LinkStateMessage linkStateMessage;
 
@@ -18,6 +20,7 @@ public class ServerConfig {
         peers = new LinkedList<>();
         peerToSeqMap = new HashMap<>();
         linkStateMessage = new LinkStateMessage();
+        uuidToAlias = new HashMap<>();
     }
 
     public ServerConfig(String uuid, String hostName, int backendPort) {
@@ -42,7 +45,10 @@ public class ServerConfig {
 
     public String getHostName() { return hostName; }
 
-    public void setHostName(String hostName) { this.hostName = hostName;}
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+        this.linkStateMessage.setReceived_from_uuid(hostName);
+    }
 
     public int getBackendPort() { return backendPort; }
 
@@ -99,4 +105,23 @@ public class ServerConfig {
 
     public LinkStateMessage getLinkStateMessage() { return linkStateMessage; }
     public void setLinkStateMessage(LinkStateMessage linkStateMessage) { this.linkStateMessage = linkStateMessage; }
+
+    public void updateAliasWithUUID(String uuid, String alias){
+        this.uuidToAlias.put(uuid,alias);
+    }
+    public String getUUIDFromAliasName(String name){
+        if(this.uuidToAlias.containsValue(name)){
+            Map.Entry<String,String> match = this.uuidToAlias.entrySet().stream()
+                    .filter(stringStringEntry -> name.equals(stringStringEntry.getValue())).findFirst().orElse(null);
+            if(match!=null) return match.getKey();
+        }
+        return null;
+    }
+    public int getPortIdFromPeerUUID(String uuid){
+        Peer matched_peer = this.peers.stream().filter(peer -> peer.getUuid().equals(uuid)).findFirst().orElse(null);
+        if(matched_peer != null) return matched_peer.getPort();
+        return -1;
+    }
+
+    public HashMap<String, String> getUuidToAlias() { return uuidToAlias; }
 }

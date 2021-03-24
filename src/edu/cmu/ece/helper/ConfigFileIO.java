@@ -7,7 +7,6 @@ import edu.cmu.ece.models.ServerConfig;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ConfigFileIO {
 
@@ -44,6 +43,8 @@ public class ConfigFileIO {
 
         if(mapFromFile.containsKey(Constants.NAME))
             config.setHostName(mapFromFile.get(Constants.NAME));
+        else
+            config.setHostName("node"+(new Random()).nextInt(10000));
 
         if(mapFromFile.containsKey(Constants.PORT))
             config.setBackendPort(Integer.parseInt(mapFromFile.get(Constants.PORT)));

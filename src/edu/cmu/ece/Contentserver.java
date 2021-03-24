@@ -12,6 +12,7 @@ import edu.cmu.ece.services.ReceiverService;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.DatagramPacket;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class Contentserver {
@@ -31,7 +32,7 @@ public class Contentserver {
             }
 
             LinkedBlockingDeque<String> liveMsgs = new LinkedBlockingDeque<>();
-            LinkedBlockingDeque<LinkStateMessage> linkStateMessages = new LinkedBlockingDeque<>();
+            LinkedBlockingDeque<DatagramPacket> linkStateMessages = new LinkedBlockingDeque<>();
 
             SharedResources.setConfigFile(configFile);
             SharedResources.setServerConfig(ConfigFileIO.parseFileToConfig());

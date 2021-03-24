@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class LinkStateMessage {
     String received_from_uuid;
+    String intermediate_from_uuid;
     long sequence_number;
     Map<String,Map<String,Integer>> distance_vector;
 
@@ -45,4 +46,11 @@ public class LinkStateMessage {
     public String toString() {
         return JsonParser.generateStringFromJson(this);
     }
+
+    public void setSequence_number(long sequence_number) {
+        this.sequence_number = sequence_number;
+    }
+
+    public String getIntermediate_from_uuid() { return intermediate_from_uuid; }
+    public void setIntermediate_from_uuid(String intermediate_from_uuid) { this.intermediate_from_uuid = intermediate_from_uuid; }
 }

@@ -1,12 +1,14 @@
 package edu.cmu.ece.services;
 
 import edu.cmu.ece.config.SharedResources;
+import edu.cmu.ece.helper.ConfigFileIO;
 import edu.cmu.ece.models.Peer;
 
 import java.io.IOException;
 import java.net.*;
 import java.util.Date;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,7 +18,7 @@ public class HeartBeatService implements Runnable{
     Map<String,Integer> currState;
     Map<String,Integer> prevState;
     final int TTL=2;
-    final boolean DEBUG_MODE=true;
+    final boolean DEBUG_MODE=false;
 
     BlockingDeque<String> liveMsgs;
 
@@ -93,6 +95,14 @@ public class HeartBeatService implements Runnable{
             while (isRunning) {
                 String s2 = liveMsgs.take();
                 String uuid = s2.split(":")[1];
+                String alias = s2.split(":")[2];
+                if(alias.equals(SharedResources.getServerConfig().getHostName())){
+                    if (DEBUG_MODE) System.out.println("Node duplicate found in liveping message");
+                    String newalias = "node"+(new Random()).nextInt(10000);
+                    SharedResources.getServerConfig().setHostName(newalias);
+                    ConfigFileIO.writeToFileConfig(SharedResources.getServerConfig());
+                }
+                SharedResources.getServerConfig().updateAliasWithUUID(uuid,alias);
                 if(DEBUG_MODE) System.out.println("heartbeat received: "+s2);
                 if (currState.containsKey(uuid) && prevState.containsKey(uuid)) {
                     Peer per =SharedResources.getServerConfig().getPeers().stream().filter(peer -> peer.getUuid().equals(uuid)).findFirst().orElse(null);

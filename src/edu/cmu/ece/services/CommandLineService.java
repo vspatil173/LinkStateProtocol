@@ -32,8 +32,9 @@ public class CommandLineService implements Runnable{
                 ((HeartBeatService)SharedResources.getHeartBeatService()).killService();
                 System.out.println("node state saved and shutdown completed");
                 killService();
-            }
-            else{
+            }else if(inputLine.isEmpty()){
+                //empty
+            }else{
                 System.out.println("invalid command :"+inputLine);
             }
         }

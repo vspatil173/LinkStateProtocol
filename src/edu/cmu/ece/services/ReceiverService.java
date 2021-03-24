@@ -13,14 +13,14 @@ import java.util.concurrent.BlockingDeque;
 
 public class ReceiverService implements Runnable{
 
-    private static final boolean DEBUG_MODE = true ;
+    private static final boolean DEBUG_MODE = false ;
     BlockingDeque<String> liveMsgs;
-    BlockingDeque<LinkStateMessage> linkstateMsgs;
+    BlockingDeque<DatagramPacket> linkstateMsgs;
     boolean isRunning = true;
     public ReceiverService() {
     }
 
-    public ReceiverService(BlockingDeque<String> liveMsgs, BlockingDeque<LinkStateMessage> linkstateMsgs) {
+    public ReceiverService(BlockingDeque<String> liveMsgs, BlockingDeque<DatagramPacket> linkstateMsgs) {
         this.liveMsgs = liveMsgs;
         this.linkstateMsgs = linkstateMsgs;
     }
@@ -44,9 +44,15 @@ public class ReceiverService implements Runnable{
                 if(DEBUG_MODE)  System.out.println(new Date() + "  " + dpack.getAddress() + " @ " + dpack.getPort() + " = "+dpack.getLength()+":"+ s2);
                 if(s2.startsWith("Live#")){
                     liveMsgs.push(s2);
+                }else if(s2.startsWith("OUT_OF_SYNC")){
+                    if(true)  System.out.println(new Date() + "  " + dpack.getAddress() + " @ " + dpack.getPort() + " = "+dpack.getLength()+":"+ s2);
+                    long suggested_seq_no = Long.parseLong(s2.split(":")[1]);
+                    long current_seq_no = SharedResources.getServerConfig().getLinkStateMessage().getSequence_number();
+                    if(suggested_seq_no >= current_seq_no){
+                        SharedResources.getServerConfig().getLinkStateMessage().setSequence_number(suggested_seq_no+1);
+                    }
                 }else{
-                    LinkStateMessage obj = JsonParser.generateMapFromString(s2);
-                    linkstateMsgs.push(obj);
+                    linkstateMsgs.push(dpack);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

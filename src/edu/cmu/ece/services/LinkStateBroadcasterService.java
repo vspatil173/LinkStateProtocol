@@ -1,6 +1,8 @@
 package edu.cmu.ece.services;
 
 import edu.cmu.ece.config.SharedResources;
+import edu.cmu.ece.helper.ConfigFileIO;
+import edu.cmu.ece.helper.JsonParser;
 import edu.cmu.ece.models.LinkStateMessage;
 import edu.cmu.ece.models.Peer;
 
@@ -8,6 +10,7 @@ import java.io.IOException;
 import java.net.*;
 import java.util.Date;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -16,9 +19,9 @@ public class LinkStateBroadcasterService implements Runnable {
     boolean isRunning = true;
     final boolean DEBUG_MODE=true;
     final int SLEEP_TIME = 50000;
-    BlockingDeque<LinkStateMessage> linkstateMsgs;
+    BlockingDeque<DatagramPacket> linkstateMsgs;
 
-    public LinkStateBroadcasterService(BlockingDeque<LinkStateMessage> linkstateMsgs) {
+    public LinkStateBroadcasterService(BlockingDeque<DatagramPacket> linkstateMsgs) {
         this.linkstateMsgs = linkstateMsgs;
     }
 
@@ -42,14 +45,14 @@ public class LinkStateBroadcasterService implements Runnable {
                 //construct the mressage here and handle the updates as well
                 byte[] arr = SharedResources.getServerConfig().getLinkStateMessage().toString().getBytes();
                 SharedResources.getServerConfig().getLinkStateMessage().increment_Sequence_Number();
-
                 for (int i = 0; i < SharedResources.getServerConfig().getPeers().size(); i++) {
                     Peer peer = SharedResources.getServerConfig().getPeers().get(i);
                     if (!peer.isActive()) continue;
                     add = InetAddress.getByName(peer.getIp());
                     DatagramPacket dpack = new DatagramPacket(arr, arr.length, add, peer.getPort());
                     try {
-                        System.out.println("sending the message to all peers");
+                        if(DEBUG_MODE) System.out.println("S@["+SharedResources.getServerConfig().getHostName()+"] -> ["
+                                +SharedResources.getServerConfig().getUuidToAlias().get(peer.getUuid())+"]");
                         dsock.send(dpack);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -66,14 +69,86 @@ public class LinkStateBroadcasterService implements Runnable {
         try {
 
             while (isRunning) {
-                LinkStateMessage s2 = linkstateMsgs.take();
-                if(DEBUG_MODE) System.out.println("Linkstate adv received: "+s2);
-//                update the records if the sequence number is greater else ignore the message
-//                if the sequence number is correct then then the message to all peers but not the original sender
+                DatagramPacket dp = linkstateMsgs.take();
+                int packSize = dp.getLength();
+                String str = new String(dp.getData(), 0, packSize);
+                LinkStateMessage s2 = JsonParser.generateMapFromString(str);
+//                if(DEBUG_MODE) System.out.println("Linkstate adv received: "+s2);
+                if(s2.getReceived_from_uuid().equals(SharedResources.getServerConfig().getHostName())){
+                    if (DEBUG_MODE) System.out.println("Node duplicate found in linkstate advertisement");
+                    String newalias = "node"+(new Random()).nextInt(10000);
+                    SharedResources.getServerConfig().setHostName(newalias);
+                    ConfigFileIO.writeToFileConfig(SharedResources.getServerConfig());
+                }
+                if(
+                        SharedResources.getServerConfig().getPeerToSeqMap().containsKey(s2.getReceived_from_uuid()) &&
+                        SharedResources.getServerConfig().getPeerToSeqMap().get(s2.getReceived_from_uuid())>=s2.getSequence_number()
+                ){
+                    handle_out_of_sync(dp, s2);
+                }else{
+                    SharedResources.getServerConfig().getPeerToSeqMap().put(s2.getReceived_from_uuid(),s2.getSequence_number());
+                    //update the table and forward
+                    //update
+                    //forward
+                    String uuidFromAliasName = SharedResources.getServerConfig().getUUIDFromAliasName(s2.getReceived_from_uuid());
+                    Peer internalPeer = SharedResources.getServerConfig().getPeers().stream().filter(peer -> peer.getUuid().equals(uuidFromAliasName))
+                            .findFirst().orElse(null);
+                    DatagramSocket dsock = null;
+                    try {
+                        dsock = new DatagramSocket();
+                    } catch (SocketException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    if(DEBUG_MODE) System.out.println("R["+s2.getReceived_from_uuid()+"]");
+                    String org_intermediate = s2.getIntermediate_from_uuid();
+                    String intermediate_uuid = org_intermediate == null ? null: SharedResources.getServerConfig().getUUIDFromAliasName(org_intermediate);
+                    s2.setIntermediate_from_uuid(SharedResources.getServerConfig().getHostName());
+                    byte[] arr = JsonParser.generateStringFromJson(s2).getBytes();
 
-                Thread.sleep((long)(SLEEP_TIME*.90));
+                    for ( Peer p : SharedResources.getServerConfig().getPeers()){
+                        if(p == internalPeer){
+                            continue;
+                        }
+                        if(p.getUuid().equals(intermediate_uuid))
+                            continue;
+                        if (!p.isActive()) continue;
+                        if(DEBUG_MODE) System.out.println("["+s2.getReceived_from_uuid()+"] -> ["+s2.getIntermediate_from_uuid()+"] -> ["
+                                + SharedResources.getServerConfig().getUuidToAlias().get(p.getUuid())+"] / #P["+linkstateMsgs.size()+"]");
+                        DatagramPacket dpack = new DatagramPacket(arr, arr.length, InetAddress.getByName(p.getIp()), p.getPort());
+                        try {
+                            dsock.send(dpack);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | UnknownHostException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handle_out_of_sync(DatagramPacket dp, LinkStateMessage s2) {
+        //old seq number used can't forward reply back asking for update
+        //handle this if you are peer to this sender
+        String uuidFromAliasName = SharedResources.getServerConfig().getUUIDFromAliasName(s2.getReceived_from_uuid());
+        if(uuidFromAliasName == null) return;
+        int portId = SharedResources.getServerConfig().getPortIdFromPeerUUID(uuidFromAliasName);
+        if (portId == -1) return;
+        if(DEBUG_MODE) System.out.println("out of sync detected @["+s2.getReceived_from_uuid()+"]");
+        //not coming from immediate peer having same seq number so ignore the message
+        if(s2.getIntermediate_from_uuid()!=null) return;
+
+        DatagramSocket dsock = null;
+        try {
+            dsock = new DatagramSocket();
+        } catch (SocketException ignored) {
+        }
+        byte[] arr = ("OUT_OF_SYNC:" + SharedResources.getServerConfig().getPeerToSeqMap().get(s2.getReceived_from_uuid())).getBytes();
+        DatagramPacket dpack = new DatagramPacket(arr, arr.length, dp.getAddress(), portId);
+        try {
+            dsock.send(dpack);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
