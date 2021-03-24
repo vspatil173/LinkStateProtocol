@@ -20,3 +20,9 @@ addneighbor uuid=27ded387-158a-440c-ae78-39704b393538 host=localhost backend_por
 
 scp edu.zip vspatil@ece002.ece.local.cmu.edu:~/projects/linkstate/
 ssh vspatil@ece002.ece.local.cmu.edu
+
+java -cp lib/*;. edu.cmu.ece.Contentserver -c testing/i1.conf
+java -cp lib/*;. edu.cmu.ece.Contentserver -c testing/i2.conf
+java -cp lib/*;. edu.cmu.ece.Contentserver -c testing/i3.conf
+java -cp lib/*;. edu.cmu.ece.Contentserver -c testing/i4.conf
+java -cp lib/*;. edu.cmu.ece.Contentserver -c testing/i5.conf
