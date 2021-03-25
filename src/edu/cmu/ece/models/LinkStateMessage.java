@@ -19,6 +19,9 @@ public class LinkStateMessage {
     public LinkStateMessage(String received_from_uuid) {
         this();
         this.received_from_uuid = received_from_uuid;
+        HashMap<String,Integer> ownself = new HashMap<>();
+        ownself.put(received_from_uuid,0);
+        distance_vector.put(received_from_uuid,ownself);
     }
 
     public String getReceived_from_uuid() { return received_from_uuid; }

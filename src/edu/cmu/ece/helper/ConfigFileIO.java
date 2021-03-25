@@ -111,15 +111,17 @@ public class ConfigFileIO {
         return duplicateRecord != null;
     }
 
-    private static LinkStateMessage generateLinkStateMessage(ServerConfig config){
+    public static LinkStateMessage generateLinkStateMessage(ServerConfig config){
         String nodeName = config.getHostName();
-        LinkStateMessage linkStateMessage = new LinkStateMessage(nodeName);
+        LinkStateMessage linkStateMessage = config.getLinkStateMessage()!=null? config.getLinkStateMessage() : new LinkStateMessage(nodeName);
         config.getPeers().forEach(peer -> {
-            linkStateMessage.addDistanceVectorDataForNode(
-                    nodeName,
-                    peer.getUuid(),
-                    peer.getDistance()
-            );
+            if(config.getUuidToAlias().containsKey(peer.getUuid())){
+                linkStateMessage.addDistanceVectorDataForNode(
+                        nodeName,
+                        config.getUuidToAlias().get(peer.getUuid()),
+                        peer.getDistance()
+                );
+            }
         });
         return  linkStateMessage;
     }

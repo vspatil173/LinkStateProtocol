@@ -19,7 +19,6 @@ public class ServerConfig {
     public ServerConfig() {
         peers = new LinkedList<>();
         peerToSeqMap = new HashMap<>();
-        linkStateMessage = new LinkStateMessage();
         uuidToAlias = new HashMap<>();
     }
 
@@ -47,7 +46,6 @@ public class ServerConfig {
 
     public void setHostName(String hostName) {
         this.hostName = hostName;
-        this.linkStateMessage.setReceived_from_uuid(hostName);
     }
 
     public int getBackendPort() { return backendPort; }
