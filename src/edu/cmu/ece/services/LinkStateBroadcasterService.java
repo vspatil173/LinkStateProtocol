@@ -3,6 +3,7 @@ package edu.cmu.ece.services;
 import edu.cmu.ece.config.SharedResources;
 import edu.cmu.ece.helper.ConfigFileIO;
 import edu.cmu.ece.helper.JsonParser;
+import edu.cmu.ece.helper.Optimizer;
 import edu.cmu.ece.models.LinkStateMessage;
 import edu.cmu.ece.models.Peer;
 
@@ -156,6 +157,7 @@ public class LinkStateBroadcasterService implements Runnable {
                 }
                 if (_TEMP_DEBUG_MODE) System.out.println("[" + cur.getKey() + "]@" + distance_to_cur_node);
             }
+            Optimizer.calculate_min_distances();
 //            System.out.println(localMsg);
         }
         if (_TEMP_DEBUG_MODE) System.out.println(localMsg);
