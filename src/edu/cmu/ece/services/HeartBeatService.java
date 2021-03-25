@@ -99,7 +99,7 @@ public class HeartBeatService implements Runnable{
                 if(alias.equals(SharedResources.getServerConfig().getHostName())){
                     if (DEBUG_MODE) System.out.println("Node duplicate found in liveping message");
                     String newalias = "node"+(new Random()).nextInt(10000);
-                    SharedResources.getServerConfig().setHostName(newalias);
+                    SharedResources.getServerConfig().setHostNameOnDuplicate(newalias);
                     ConfigFileIO.writeToFileConfig(SharedResources.getServerConfig());
                 }
                 SharedResources.getServerConfig().updateAliasWithUUID(uuid,alias);

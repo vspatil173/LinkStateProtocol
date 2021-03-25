@@ -48,6 +48,14 @@ public class ServerConfig {
         this.hostName = hostName;
     }
 
+    public void setHostNameOnDuplicate(String hostName) {
+        this.hostName = hostName;
+        this.linkStateMessage.setReceived_from_uuid(hostName);
+        HashMap<String,Integer> ownself = new HashMap<>();
+        ownself.put(hostName,0);
+        this.linkStateMessage.getDistance_vector().put(hostName,ownself);
+    }
+
     public int getBackendPort() { return backendPort; }
 
     public void setBackendPort(int backendPort) { this.backendPort = backendPort;}

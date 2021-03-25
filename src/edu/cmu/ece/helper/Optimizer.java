@@ -58,6 +58,7 @@ public class Optimizer {
     public static void calculate_min_distances() {
         LinkStateMessage localMsg = SharedResources.getServerConfig().getLinkStateMessage();
         int no_of_peers = localMsg.getDistance_vector().size();
+
         int peers = localMsg.getDistance_vector().get(SharedResources.serverConfig.getHostName()).size();
 //        int peers = localMsg.getDistance_vector().get("node1900").size();
         if(no_of_peers!=peers) {System.out.println("nah nah kuch toh gadbad hey daya"); return;}

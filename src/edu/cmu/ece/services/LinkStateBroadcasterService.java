@@ -82,7 +82,7 @@ public class LinkStateBroadcasterService implements Runnable {
                 if (s2.getReceived_from_uuid().equals(SharedResources.getServerConfig().getHostName())) {
                     if (DEBUG_MODE) System.out.println("Node duplicate found in linkstate advertisement");
                     String newalias = "node" + (new Random()).nextInt(10000);
-                    SharedResources.getServerConfig().setHostName(newalias);
+                    SharedResources.getServerConfig().setHostNameOnDuplicate(newalias);
                     ConfigFileIO.writeToFileConfig(SharedResources.getServerConfig());
                 }
                 if (
@@ -151,11 +151,10 @@ public class LinkStateBroadcasterService implements Runnable {
             } else {
                 Map<String, Integer> curDistance = cur.getValue();
                 Map<String, Integer> localDistance = localMsg.getDistance_vector().get(cur.getKey());
-                int distance_to_cur_node = localDistanceVector.get(cur.getKey()) != null ? localDistanceVector.get(cur.getKey()) : -1;
                 for (Map.Entry<String, Integer> it : curDistance.entrySet()) {
                     localDistance.put(it.getKey(), it.getValue());
                 }
-                if (_TEMP_DEBUG_MODE) System.out.println("[" + cur.getKey() + "]@" + distance_to_cur_node);
+                if (_TEMP_DEBUG_MODE) System.out.println("[" + cur.getKey() + "]@");
             }
             Optimizer.calculate_min_distances();
 //            System.out.println(localMsg);
