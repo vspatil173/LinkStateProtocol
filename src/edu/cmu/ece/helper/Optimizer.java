@@ -3,18 +3,16 @@ package edu.cmu.ece.helper;
 import edu.cmu.ece.config.SharedResources;
 import edu.cmu.ece.models.LinkStateMessage;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 public class Optimizer {
-    private static int minDistance(int[] dist, Boolean[] sptSet, int V)
+    final static boolean DEBUG_MODE=true;
+    private static int minDistance(double[] dist, Boolean[] sptSet, int V)
     {
-        int min = Integer.MAX_VALUE, min_index = -1;
+        double min = Double.MAX_VALUE;
+        int min_index = -1;
 
         for (int v = 0; v < V; v++)
             if (!sptSet[v] && dist[v] <= min) {
@@ -25,20 +23,20 @@ public class Optimizer {
         return min_index;
     }
 
-    private static void printSolution(int[] dist, int V)
+    private static void printSolution(double[] dist, int V)
     {
         System.out.println("Vertex \t\t Distance from Source");
         for (int i = 0; i < V; i++)
             System.out.println(i + " \t\t " + dist[i]);
     }
 
-    private static int[] dijkstra(int[][] graph, int src, int V)
+    private static double[] dijkstra(double[][] graph, int src, int V)
     {
-        int[] dist = new int[V];
+        double[] dist = new double[V];
         Boolean[] sptSet = new Boolean[V];
 
         for (int i = 0; i < V; i++) {
-            dist[i] = Integer.MAX_VALUE;
+            dist[i] = Double.MAX_VALUE;
             sptSet[i] = false;
         }
 
@@ -48,7 +46,7 @@ public class Optimizer {
             int u = minDistance(dist, sptSet,V);
             sptSet[u] = true;
             for (int v = 0; v < V; v++)
-                if (!sptSet[v] && graph[u][v] != 0 && dist[u] != Integer.MAX_VALUE && dist[u] + graph[u][v] < dist[v])
+                if (!sptSet[v] && graph[u][v] != 0 && dist[u] != Double.MAX_VALUE && dist[u] + graph[u][v] < dist[v])
                     dist[v] = dist[u] + graph[u][v];
         }
         printSolution(dist,V);
@@ -56,6 +54,7 @@ public class Optimizer {
     }
 
     public static void calculate_min_distances() {
+
         LinkStateMessage localMsg = SharedResources.getServerConfig().getLinkStateMessage();
         int no_of_peers = localMsg.getDistance_vector().size();
 
@@ -64,7 +63,7 @@ public class Optimizer {
         if(no_of_peers!=peers) {System.out.println("nah nah kuch toh gadbad hey daya"); return;}
 
         //convert to array format
-        int [][]graph = new int[peers][peers];
+        double [][]graph = new double[peers][peers];
         List<String> peer_names = new LinkedList<>(localMsg.getDistance_vector()
                 .get(SharedResources.serverConfig.getHostName()).keySet());
 //        List<String> peer_names = new LinkedList<>(localMsg.getDistance_vector()
@@ -73,8 +72,8 @@ public class Optimizer {
             for(int j = 0;j < peer_names.size();j++){
                 graph[i][j] =
                         localMsg.getDistance_vector().get(peer_names.get(i)).get(peer_names.get(j)) == null
-                            ? 10000
-                            :localMsg.getDistance_vector().get(peer_names.get(i)).get(peer_names.get(j));
+                                ? 10000
+                                : localMsg.getDistance_vector().get(peer_names.get(i)).get(peer_names.get(j));
                 System.out.print(graph[i][j]+"\t");
             }
             System.out.println();
@@ -84,8 +83,9 @@ public class Optimizer {
         //call dijkstra
 //        int srcIndex = peer_names.indexOf("node1900");
         System.out.println(peer_names.get(srcIndex));
-        int[] dist = Optimizer.dijkstra(graph,srcIndex,peers);
+        double[] dist = Optimizer.dijkstra(graph,srcIndex,peers);
         //update local msg with new values
+        if(DEBUG_MODE) System.out.println(dist);
         for(int j = 0;j < peer_names.size();j++){
             localMsg.getDistance_vector().get(SharedResources.serverConfig.getHostName()).put(peer_names.get(j),dist[j]);
 //            localMsg.getDistance_vector().get("node1900").put(peer_names.get(j),dist[j]);

@@ -32,6 +32,10 @@ public class CommandLineService implements Runnable{
                 ((HeartBeatService)SharedResources.getHeartBeatService()).killService();
                 System.out.println("node state saved and shutdown completed");
                 killService();
+            }else if(inputLine.startsWith(Constants.ENABLE_METRIC)){
+                SharedResources.getServerConfig().enableActiveMetric();
+            }else if(inputLine.startsWith(Constants.DISABLE_METRIC)){
+                SharedResources.getServerConfig().disableActiveMetric();
             }else if(inputLine.isEmpty()){
                 //empty
             }else{

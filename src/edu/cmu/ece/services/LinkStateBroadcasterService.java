@@ -92,6 +92,7 @@ public class LinkStateBroadcasterService implements Runnable {
                     handle_out_of_sync(dp, s2);
                 } else {
                     SharedResources.getServerConfig().getPeerToSeqMap().put(s2.getReceived_from_uuid(), s2.getSequence_number());
+                    SharedResources.getServerConfig().getPeerToTimeMap().put(s2.getReceived_from_uuid(), s2.getCurrent_time());
                     //update the table and forward
                     //update
                     //forward
@@ -141,18 +142,26 @@ public class LinkStateBroadcasterService implements Runnable {
         LinkStateMessage localMsg = SharedResources.getServerConfig().getLinkStateMessage();
         if (_TEMP_DEBUG_MODE) System.out.println(s2);
         //own distance vector
-        Map<String, Integer> localDistanceVector = localMsg.getDistance_vector().get(SharedResources.getServerConfig().getHostName());
-        for (Map.Entry<String, Map<String, Integer>> cur : s2.getDistance_vector().entrySet()) {
+        Map<String, Double> localDistanceVector = localMsg.getDistance_vector().get(SharedResources.getServerConfig().getHostName());
+        for (Map.Entry<String, Map<String, Double>> cur : s2.getDistance_vector().entrySet()) {
             if (!localMsg.getDistance_vector().containsKey(cur.getKey())) {
                 if (_TEMP_DEBUG_MODE) System.out.println("new node discovered [" + cur + "]");
-                localMsg.getDistance_vector().put(cur.getKey(), cur.getValue());
+                if(SharedResources.getServerConfig().isActiveMetric()){
+                    localMsg.getDistance_vector().put(cur.getKey(), cur.getValue());
+                }else {
+                    localMsg.getDistance_vector().put(cur.getKey(), cur.getValue());
+                }
                 //updating own distance vector with new node
                 localDistanceVector.put(cur.getKey(), cur.getValue().get(SharedResources.getServerConfig().getHostName()));
             } else {
-                Map<String, Integer> curDistance = cur.getValue();
-                Map<String, Integer> localDistance = localMsg.getDistance_vector().get(cur.getKey());
-                for (Map.Entry<String, Integer> it : curDistance.entrySet()) {
-                    localDistance.put(it.getKey(), it.getValue());
+                Map<String, Double> curDistance = cur.getValue();
+                Map<String, Double> localDistance = localMsg.getDistance_vector().get(cur.getKey());
+                for (Map.Entry<String, Double> it : curDistance.entrySet()) {
+                    if(SharedResources.getServerConfig().isActiveMetric()){
+                        localDistance.put(it.getKey(), (double) (System.currentTimeMillis() - s2.getCurrent_time()));
+                    }else{
+                        localDistance.put(it.getKey(), it.getValue());
+                    }
                 }
                 if (_TEMP_DEBUG_MODE) System.out.println("[" + cur.getKey() + "]@");
             }

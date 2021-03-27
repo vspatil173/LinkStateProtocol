@@ -49,6 +49,9 @@ public class ConfigFileIO {
         if(mapFromFile.containsKey(Constants.PORT))
             config.setBackendPort(Integer.parseInt(mapFromFile.get(Constants.PORT)));
 
+        if(mapFromFile.containsKey(Constants.ACTIVE_METRIC))
+            config.setActive_metric(Integer.parseInt(mapFromFile.get(Constants.ACTIVE_METRIC)));
+
         if(mapFromFile.containsKey(Constants.PEER_COUNT)){
             config.setPeer_count(Integer.parseInt(mapFromFile.get(Constants.PEER_COUNT)));
             for (String s : node_list) {
@@ -119,7 +122,7 @@ public class ConfigFileIO {
                 linkStateMessage.addDistanceVectorDataForNode(
                         nodeName,
                         config.getUuidToAlias().get(peer.getUuid()),
-                        peer.getDistance()
+                        config.isActiveMetric() ? 0.0: (double) peer.getDistance()
                 );
             }
         });

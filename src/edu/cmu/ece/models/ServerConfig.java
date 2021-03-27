@@ -14,12 +14,15 @@ public class ServerConfig {
     List<Peer> peers;
     HashMap<String,String> uuidToAlias;
     HashMap<String,Long> peerToSeqMap;
+    HashMap<String,Long> peerToTimeMap;
     LinkStateMessage linkStateMessage;
-
+    int active_metric;
     public ServerConfig() {
         peers = new LinkedList<>();
         peerToSeqMap = new HashMap<>();
+        peerToTimeMap = new HashMap<>();
         uuidToAlias = new HashMap<>();
+        active_metric = 0;
     }
 
     public ServerConfig(String uuid, String hostName, int backendPort) {
@@ -51,8 +54,8 @@ public class ServerConfig {
     public void setHostNameOnDuplicate(String hostName) {
         this.hostName = hostName;
         this.linkStateMessage.setReceived_from_uuid(hostName);
-        HashMap<String,Integer> ownself = new HashMap<>();
-        ownself.put(hostName,0);
+        HashMap<String,Double> ownself = new HashMap<>();
+        ownself.put(hostName,0.0);
         this.linkStateMessage.getDistance_vector().put(hostName,ownself);
     }
 
@@ -85,6 +88,7 @@ public class ServerConfig {
         StringBuilder result =  new StringBuilder("uuid = " + uuid + "\n" +
                 "name = " + hostName + "\n" +
                 "backend_port = " + backendPort + "\n"+
+                "active_metric = " + active_metric + "\n"+
                 "peer_count = " + peer_count +"\n");
         peers.forEach(peer -> {
             result.append(peer.toString()).append("\n");
@@ -109,6 +113,9 @@ public class ServerConfig {
     public HashMap<String, Long> getPeerToSeqMap() { return peerToSeqMap; }
     public void setPeerToSeqMap(HashMap<String, Long> peerToSeqMap) { this.peerToSeqMap = peerToSeqMap; }
 
+    public HashMap<String, Long> getPeerToTimeMap() { return peerToTimeMap; }
+    public void setPeerToTimeMap(HashMap<String, Long> peerToTimeMap) { this.peerToTimeMap = peerToTimeMap; }
+
     public LinkStateMessage getLinkStateMessage() { return linkStateMessage; }
     public void setLinkStateMessage(LinkStateMessage linkStateMessage) { this.linkStateMessage = linkStateMessage; }
 
@@ -130,4 +137,22 @@ public class ServerConfig {
     }
 
     public HashMap<String, String> getUuidToAlias() { return uuidToAlias; }
+
+    public int getActive_metric() {
+        return active_metric;
+    }
+
+    public void setActive_metric(int active_metric) {
+        this.active_metric = active_metric;
+    }
+
+    public void enableActiveMetric(){
+        setActive_metric(1);
+    }
+    public void disableActiveMetric(){
+        setActive_metric(0);
+    }
+    public boolean isActiveMetric(){
+        return getActive_metric() == 1;
+    }
 }
