@@ -26,4 +26,12 @@ java -cp lib/*;. edu.cmu.ece.Contentserver -c testing/i2.conf
 java -cp lib/*;. edu.cmu.ece.Contentserver -c testing/i3.conf
 java -cp lib/*;. edu.cmu.ece.Contentserver -c testing/i4.conf
 java -cp lib/*;. edu.cmu.ece.Contentserver -c testing/i5.conf
+
+
+java -cp lib/*:. edu.cmu.ece.Contentserver -c ../testing/i1.conf
+java -cp lib/*:. edu.cmu.ece.Contentserver -c ../testing/i2.conf
+java -cp lib/*:. edu.cmu.ece.Contentserver -c ../testing/i3.conf
+java -cp lib/*:. edu.cmu.ece.Contentserver -c testing/i4.conf
+java -cp lib/*:. edu.cmu.ece.Contentserver -c testing/i5.conf
+
 set CLASSPATH=D:\CMU\sem1\18441_NW\LinkStateProtocol

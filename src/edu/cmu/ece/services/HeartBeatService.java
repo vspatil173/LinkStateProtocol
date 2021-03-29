@@ -7,6 +7,7 @@ import edu.cmu.ece.models.Peer;
 import java.io.IOException;
 import java.net.*;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.BlockingDeque;
@@ -55,6 +56,13 @@ public class HeartBeatService implements Runnable{
                     if (currState.containsKey(peer.getUuid()) && prevState.containsKey(peer.getUuid())) {
                         if (currState.get(peer.getUuid()).equals(-1)) {
                             peer.setActive(false);
+                            String hname = SharedResources.getServerConfig().getUuidToAlias().get(peer.getUuid());
+                            if(hname!=null){
+                                SharedResources.getServerConfig().getDirect_peer_map().remove(hname);
+                                for(Map.Entry<String, List<String>> cur:SharedResources.getServerConfig().getDirect_peer_map().entrySet()){
+                                    cur.getValue().remove(hname);
+                                }
+                            }
                             System.out.println(new Date() + "  " + peer.getUuid() + " got disconnected");
                             ConfigFileIO.writeToFileConfig(SharedResources.getServerConfig());
                         } else if (prevState.get(peer.getUuid()) == -1 && currState.get(peer.getUuid()) == 0) {

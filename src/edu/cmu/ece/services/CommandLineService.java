@@ -93,13 +93,22 @@ public class CommandLineService implements Runnable{
     public void maphandler(){
         HashMap<String, HashMap<String,Double>> map = new HashMap<>();
         HashMap<String,Double> cur;
+        Set<String> liveList = new HashSet<>();
+        for( Map.Entry<String,List<String>> cur1: SharedResources.getServerConfig().getDirect_peer_map().entrySet()){
+            cur1.getValue().forEach(s -> {
+                liveList.add(cur1.getKey());
+            });
+        }
+
         for(Map.Entry<String, List<String>> entry : SharedResources.getServerConfig().getDirect_peer_map().entrySet()){
             cur = new HashMap<>();
             for(String node:entry.getValue()){
                 double dist = SharedResources.getServerConfig()
                         .getLinkStateMessage().getDistance_vector()
                         .get(entry.getKey()).get(node);
-                cur.put(node,dist);
+//                if(SharedResources.getServerConfig().getDirect_peer_map().get(entry.getKey()).contains(entry.getKey()))
+                if(liveList.contains(node))
+                    cur.put(node,dist);
             }
             map.put(entry.getKey(),cur);
         }
