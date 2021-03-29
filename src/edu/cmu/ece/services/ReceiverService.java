@@ -13,7 +13,7 @@ import java.util.concurrent.BlockingDeque;
 
 public class ReceiverService implements Runnable{
 
-    private static final boolean DEBUG_MODE = false ;
+    boolean DEBUG_MODE = false ;
     BlockingDeque<String> liveMsgs;
     BlockingDeque<DatagramPacket> linkstateMsgs;
     boolean isRunning = true;
@@ -45,7 +45,7 @@ public class ReceiverService implements Runnable{
                 if(s2.startsWith("Live#")){
                     liveMsgs.push(s2);
                 }else if(s2.startsWith("OUT_OF_SYNC")){
-                    if(true)  System.out.println(new Date() + "  " + dpack.getAddress() + " @ " + dpack.getPort() + " = "+dpack.getLength()+":"+ s2);
+                    if(DEBUG_MODE)  System.out.println(new Date() + "  " + dpack.getAddress() + " @ " + dpack.getPort() + " = "+dpack.getLength()+":"+ s2);
                     long suggested_seq_no = Long.parseLong(s2.split(":")[1]);
                     long current_seq_no = SharedResources.getServerConfig().getLinkStateMessage().getSequence_number();
                     if(suggested_seq_no >= current_seq_no){
@@ -58,5 +58,9 @@ public class ReceiverService implements Runnable{
                 e.printStackTrace();
             }
         }
+    }
+
+    public void setDEBUG_MODE(boolean DEBUG_MODE) {
+        this.DEBUG_MODE = DEBUG_MODE;
     }
 }

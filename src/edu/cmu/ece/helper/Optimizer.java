@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Optimizer {
-    final static boolean DEBUG_MODE=true;
+    static boolean DEBUG_MODE=false;
     private static int minDistance(double[] dist, Boolean[] sptSet, int V)
     {
         double min = Double.MAX_VALUE;
@@ -60,7 +60,10 @@ public class Optimizer {
 
         int peers = localMsg.getDistance_vector().get(SharedResources.serverConfig.getHostName()).size();
 //        int peers = localMsg.getDistance_vector().get("node1900").size();
-        if(no_of_peers!=peers) {System.out.println("nah nah kuch toh gadbad hey daya"); return;}
+        if(no_of_peers!=peers) {
+            if(DEBUG_MODE) System.out.println("dimension not matching");
+            return;
+        }
 
         //convert to array format
         double [][]graph = new double[peers][peers];
@@ -91,5 +94,9 @@ public class Optimizer {
             }
         }
         if(DEBUG_MODE)System.out.println(localMsg);
+    }
+
+    public static void setDebugMode(boolean debugMode) {
+        DEBUG_MODE = debugMode;
     }
 }

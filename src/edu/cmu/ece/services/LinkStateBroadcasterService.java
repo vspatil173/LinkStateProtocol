@@ -18,9 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LinkStateBroadcasterService implements Runnable {
 
     boolean isRunning = true;
-    final boolean DEBUG_MODE = false;
-    final boolean _TEMP_DEBUG_MODE = true;
-    final int SLEEP_TIME = 50000;
+    boolean DEBUG_MODE = false;
+    final int SLEEP_TIME = 35000;
     BlockingDeque<DatagramPacket> linkstateMsgs;
 
     public LinkStateBroadcasterService(BlockingDeque<DatagramPacket> linkstateMsgs) {
@@ -127,6 +126,7 @@ public class LinkStateBroadcasterService implements Runnable {
                                     + SharedResources.getServerConfig().getUuidToAlias().get(p.getUuid()) + "] / #P[" + linkstateMsgs.size() + "]");
                         DatagramPacket dpack = new DatagramPacket(arr, arr.length, InetAddress.getByName(p.getIp()), p.getPort());
                         try {
+//                            Thread.sleep((long)(SLEEP_TIME*.10));
                             dsock.send(dpack);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -141,12 +141,12 @@ public class LinkStateBroadcasterService implements Runnable {
 
     private void updateLinkStateMessage(LinkStateMessage s2) {
         LinkStateMessage localMsg = SharedResources.getServerConfig().getLinkStateMessage();
-        if (_TEMP_DEBUG_MODE) System.out.println(s2);
+        if (DEBUG_MODE) System.out.println(s2);
         //own distance vector
         Map<String, Double> localDistanceVector = localMsg.getDistance_vector().get(SharedResources.getServerConfig().getHostName());
         for (Map.Entry<String, Map<String, Double>> cur : s2.getDistance_vector().entrySet()) {
             if (!localMsg.getDistance_vector().containsKey(cur.getKey())) {
-                if (_TEMP_DEBUG_MODE) System.out.println("new node discovered [" + cur + "]");
+                if (DEBUG_MODE) System.out.println("new node discovered [" + cur + "]");
                 if(SharedResources.getServerConfig().isActiveMetric()){
                     localMsg.getDistance_vector().put(cur.getKey(), cur.getValue());
                 }else {
@@ -164,12 +164,12 @@ public class LinkStateBroadcasterService implements Runnable {
                         localDistance.put(it.getKey(), it.getValue());
                     }
                 }
-                if (_TEMP_DEBUG_MODE) System.out.println("[" + cur.getKey() + "]@");
+                if (DEBUG_MODE) System.out.println("[" + cur.getKey() + "]@");
             }
             Optimizer.calculate_min_distances();
 //            System.out.println(localMsg);
         }
-        if (_TEMP_DEBUG_MODE) System.out.println(localMsg);
+        if (DEBUG_MODE) System.out.println(localMsg);
 
     }
 
@@ -197,6 +197,10 @@ public class LinkStateBroadcasterService implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setDEBUG_MODE(boolean DEBUG_MODE) {
+        this.DEBUG_MODE = DEBUG_MODE;
     }
 
     public void killService() {

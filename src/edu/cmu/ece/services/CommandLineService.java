@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.cmu.ece.config.SharedResources;
 import edu.cmu.ece.helper.ConfigFileIO;
 import edu.cmu.ece.helper.Constants;
+import edu.cmu.ece.helper.Optimizer;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,16 +34,31 @@ public class CommandLineService implements Runnable{
             else if(inputLine.startsWith(Constants.CMD_KILL)){
                 System.out.println("Shutting down node");
                 ((HeartBeatService)SharedResources.getHeartBeatService()).killService();
+                ((LinkStateBroadcasterService)SharedResources.getLinkStateBroadcasterService()).killService();
                 System.out.println("node state saved and shutdown completed");
                 killService();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) { e.printStackTrace(); }
+                System.exit(0);
             }else if(inputLine.startsWith(Constants.ENABLE_METRIC)){
                 SharedResources.getServerConfig().enableActiveMetric();
+                ConfigFileIO.writeToFileConfig(SharedResources.getServerConfig());
             }else if(inputLine.startsWith(Constants.DISABLE_METRIC)){
                 SharedResources.getServerConfig().disableActiveMetric();
+                ConfigFileIO.writeToFileConfig(SharedResources.getServerConfig());
             }else if(inputLine.startsWith(Constants.MAP)){
                 maphandler();
             }else if(inputLine.startsWith(Constants.RANK)){
                 rankhandler();
+            }else if(inputLine.startsWith(Constants.ENABLE_DEBUG)){
+                Optimizer.setDebugMode(true);
+                ((HeartBeatService)SharedResources.getHeartBeatService()).setDEBUG_MODE(true);
+                ((LinkStateBroadcasterService)SharedResources.getLinkStateBroadcasterService()).setDEBUG_MODE(true);
+            }else if(inputLine.startsWith(Constants.DISABLE_DEBUG)){
+                Optimizer.setDebugMode(false);
+                ((HeartBeatService)SharedResources.getHeartBeatService()).setDEBUG_MODE(false);
+                ((LinkStateBroadcasterService)SharedResources.getLinkStateBroadcasterService()).setDEBUG_MODE(false);
             }else if(inputLine.isEmpty()){
                 //empty
             }else{

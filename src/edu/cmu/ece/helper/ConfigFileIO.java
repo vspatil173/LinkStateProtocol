@@ -88,7 +88,7 @@ public class ConfigFileIO {
             paraMaps.put(paras.split("=")[0],paras.split("=")[1]);
         }
 
-        String pid = Constants.PEER_PREFIX+(SharedResources.getServerConfig().getPeer_count()+1);
+        String pid = Constants.PEER_PREFIX+(SharedResources.getServerConfig().getPeer_count());
         if(paraMaps.containsKey(Constants.UUID) && paraMaps.containsKey(Constants.HOST) &&
                 paraMaps.containsKey(Constants.PORT) && paraMaps.containsKey(Constants.METRIC)){
 

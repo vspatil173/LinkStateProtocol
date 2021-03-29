@@ -22,7 +22,7 @@ public class Peer {
 
     @Override
     public String toString() {
-        return pid + " = " + uuid + ", " + ip + ", " + port +", "+ distance;
+        return pid + " = " + uuid + ", " + ip + ", " + port +", "+ distance+", "+ (isActive);
     }
 
     public String getPid() {

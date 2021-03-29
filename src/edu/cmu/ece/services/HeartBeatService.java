@@ -18,7 +18,7 @@ public class HeartBeatService implements Runnable{
     Map<String,Integer> currState;
     Map<String,Integer> prevState;
     final int TTL=2;
-    final boolean DEBUG_MODE=false;
+    boolean DEBUG_MODE=false;
 
     BlockingDeque<String> liveMsgs;
 
@@ -56,6 +56,7 @@ public class HeartBeatService implements Runnable{
                         if (currState.get(peer.getUuid()).equals(-1)) {
                             peer.setActive(false);
                             System.out.println(new Date() + "  " + peer.getUuid() + " got disconnected");
+                            ConfigFileIO.writeToFileConfig(SharedResources.getServerConfig());
                         } else if (prevState.get(peer.getUuid()) == -1 && currState.get(peer.getUuid()) == 0) {
                             //initial condition
                             currState.put(peer.getUuid(), currState.get(peer.getUuid()) - 1);
@@ -126,4 +127,6 @@ public class HeartBeatService implements Runnable{
     public void killService(){
         isRunning = false;
     }
+
+    public void setDEBUG_MODE(boolean DEBUG_MODE) { this.DEBUG_MODE = DEBUG_MODE; }
 }
