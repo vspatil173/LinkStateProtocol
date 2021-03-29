@@ -93,6 +93,7 @@ public class LinkStateBroadcasterService implements Runnable {
                 } else {
                     SharedResources.getServerConfig().getPeerToSeqMap().put(s2.getReceived_from_uuid(), s2.getSequence_number());
                     SharedResources.getServerConfig().getPeerToTimeMap().put(s2.getReceived_from_uuid(), s2.getCurrent_time());
+                    SharedResources.getServerConfig().getDirect_peer_map().put(s2.getReceived_from_uuid(),s2.getDirect_peers());
                     //update the table and forward
                     //update
                     //forward

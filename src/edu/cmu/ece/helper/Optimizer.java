@@ -25,9 +25,9 @@ public class Optimizer {
 
     private static void printSolution(double[] dist, int V)
     {
-        System.out.println("Vertex \t\t Distance from Source");
+        if(DEBUG_MODE)System.out.println("Vertex \t\t Distance from Source");
         for (int i = 0; i < V; i++)
-            System.out.println(i + " \t\t " + dist[i]);
+            if(DEBUG_MODE) System.out.println(i + " \t\t " + dist[i]);
     }
 
     private static double[] dijkstra(double[][] graph, int src, int V)
@@ -74,37 +74,22 @@ public class Optimizer {
                         localMsg.getDistance_vector().get(peer_names.get(i)).get(peer_names.get(j)) == null
                                 ? 10000
                                 : localMsg.getDistance_vector().get(peer_names.get(i)).get(peer_names.get(j));
-                System.out.print(graph[i][j]+"\t");
+                if(DEBUG_MODE) System.out.print(graph[i][j]+"\t");
             }
-            System.out.println();
+            if(DEBUG_MODE) System.out.println();
         }
-        System.out.println(peer_names);
+        if(DEBUG_MODE) System.out.println(peer_names);
         int srcIndex = peer_names.indexOf(SharedResources.getServerConfig().getHostName());
         //call dijkstra
 //        int srcIndex = peer_names.indexOf("node1900");
-        System.out.println(peer_names.get(srcIndex));
-        double[] dist = Optimizer.dijkstra(graph,srcIndex,peers);
-        //update local msg with new values
-        if(DEBUG_MODE) System.out.println(dist);
-        for(int j = 0;j < peer_names.size();j++){
-            localMsg.getDistance_vector().get(SharedResources.serverConfig.getHostName()).put(peer_names.get(j),dist[j]);
-//            localMsg.getDistance_vector().get("node1900").put(peer_names.get(j),dist[j]);
-        }
-        System.out.println(localMsg);
-    }
-    /*public static void main(String[] args) throws Exception {
-        StringBuilder container = new StringBuilder();
-        try {
-            FileReader reader = new FileReader("resources/temp.json");
-            BufferedReader bufferedReader = new BufferedReader(reader);
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                container.append(line);
+        if(DEBUG_MODE) System.out.println(peer_names.get(srcIndex));
+        for(int i = 0; i < peer_names.size();i++) {
+            double[] dist = Optimizer.dijkstra(graph, i, peers);
+//            System.out.println(Arrays.toString(dist));
+            for (int j = 0; j < peer_names.size(); j++) {
+                localMsg.getDistance_vector().get(peer_names.get(i)).put(peer_names.get(j), dist[j]);
             }
-        } catch (IOException e) { e.printStackTrace(); }
-
-        LinkStateMessage linkStateMessage = JsonParser.generateMapFromString(container.toString());
-        Optimizer t = new Optimizer();
-        t.calculate_min_distances(linkStateMessage);
-    }*/
+        }
+        if(DEBUG_MODE)System.out.println(localMsg);
+    }
 }

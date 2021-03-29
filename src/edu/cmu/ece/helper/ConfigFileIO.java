@@ -117,6 +117,15 @@ public class ConfigFileIO {
     public static LinkStateMessage generateLinkStateMessage(ServerConfig config){
         String nodeName = config.getHostName();
         LinkStateMessage linkStateMessage = config.getLinkStateMessage()!=null? config.getLinkStateMessage() : new LinkStateMessage(nodeName);
+        linkStateMessage.setDirect_peers(new LinkedList<>());
+        List<String> peers = new LinkedList<>();
+        config.getPeers().forEach(peer -> {
+            if(peer.isActive() && config.getUuidToAlias().containsKey(peer.getUuid())){
+                linkStateMessage.getDirect_peers().add(config.getUuidToAlias().get(peer.getUuid()));
+                peers.add(config.getUuidToAlias().get(peer.getUuid()));
+            }
+        });
+        config.getDirect_peer_map().put(nodeName,peers);
         config.getPeers().forEach(peer -> {
             if(config.getUuidToAlias().containsKey(peer.getUuid())){
                 linkStateMessage.addDistanceVectorDataForNode(

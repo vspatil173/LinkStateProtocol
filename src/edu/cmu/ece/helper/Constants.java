@@ -18,6 +18,8 @@ public class Constants {
     public static final String CMD_KILL="kill";
     public static final String ENABLE_METRIC="activate_metric";
     public static final String DISABLE_METRIC="disable_metric";
+    public static final String MAP="map";
+    public static final String RANK="rank";
 
     public static final String CONF_FILE="resources/node.conf";
 

@@ -3,6 +3,8 @@ package edu.cmu.ece.models;
 import edu.cmu.ece.helper.JsonParser;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class LinkStateMessage {
@@ -10,12 +12,17 @@ public class LinkStateMessage {
     String intermediate_from_uuid;
     long sequence_number;
     Map<String,Map<String,Double>> distance_vector;
+    List<String> direct_peers;
     long current_time;
     public LinkStateMessage() {
         sequence_number = 0;
         current_time = System.currentTimeMillis();
         distance_vector = new HashMap<>();
+        direct_peers = new LinkedList<>();
     }
+
+    public List<String> getDirect_peers() { return direct_peers; }
+    public void setDirect_peers(List<String> direct_peers) { this.direct_peers = direct_peers; }
 
     public LinkStateMessage(String received_from_uuid) {
         this();

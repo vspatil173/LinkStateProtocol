@@ -1,10 +1,13 @@
 package edu.cmu.ece.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.cmu.ece.config.SharedResources;
 import edu.cmu.ece.helper.ConfigFileIO;
 import edu.cmu.ece.helper.Constants;
 
-import java.util.Scanner;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandLineService implements Runnable{
     boolean isRunning = true;
@@ -36,11 +39,59 @@ public class CommandLineService implements Runnable{
                 SharedResources.getServerConfig().enableActiveMetric();
             }else if(inputLine.startsWith(Constants.DISABLE_METRIC)){
                 SharedResources.getServerConfig().disableActiveMetric();
+            }else if(inputLine.startsWith(Constants.MAP)){
+                maphandler();
+            }else if(inputLine.startsWith(Constants.RANK)){
+                rankhandler();
             }else if(inputLine.isEmpty()){
                 //empty
             }else{
                 System.out.println("invalid command :"+inputLine);
             }
+        }
+    }
+
+    private void rankhandler() {
+        Map<String,Double> hostmap = SharedResources.getServerConfig().getLinkStateMessage()
+                .getDistance_vector().get(SharedResources.serverConfig.getHostName());
+        Object[] a = hostmap.entrySet().toArray();
+        Arrays.sort(a,new Comparator() {
+            public int compare(Object o1, Object o2) {
+                return ((Map.Entry<String, Double>) o1).getValue()
+                        .compareTo(((Map.Entry<Double, Double>) o2).getValue());
+            }
+        });
+        List<Map.Entry<String, Double>> list =
+                new LinkedList<>();
+        for(Object e :a){
+            list.add((Map.Entry<String,Double>)e);
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(list));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void maphandler(){
+        HashMap<String, HashMap<String,Double>> map = new HashMap<>();
+        HashMap<String,Double> cur;
+        for(Map.Entry<String, List<String>> entry : SharedResources.getServerConfig().getDirect_peer_map().entrySet()){
+            cur = new HashMap<>();
+            for(String node:entry.getValue()){
+                double dist = SharedResources.getServerConfig()
+                        .getLinkStateMessage().getDistance_vector()
+                        .get(entry.getKey()).get(node);
+                cur.put(node,dist);
+            }
+            map.put(entry.getKey(),cur);
+        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(map));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
     }
 

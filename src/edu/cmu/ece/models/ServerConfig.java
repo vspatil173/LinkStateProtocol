@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ServerConfig {
@@ -16,12 +17,14 @@ public class ServerConfig {
     HashMap<String,Long> peerToSeqMap;
     HashMap<String,Long> peerToTimeMap;
     LinkStateMessage linkStateMessage;
+    ConcurrentHashMap<String,List<String>> direct_peer_map;
     int active_metric;
     public ServerConfig() {
         peers = new LinkedList<>();
         peerToSeqMap = new HashMap<>();
         peerToTimeMap = new HashMap<>();
         uuidToAlias = new HashMap<>();
+        direct_peer_map = new ConcurrentHashMap<>();
         active_metric = 0;
     }
 
@@ -70,6 +73,14 @@ public class ServerConfig {
     public List<Peer> getPeers() { return peers; }
 
     public void setPeers(List<Peer> peers) { this.peers = peers; }
+
+    public ConcurrentHashMap<String, List<String>> getDirect_peer_map() {
+        return direct_peer_map;
+    }
+
+    public void setDirect_peer_map(ConcurrentHashMap<String, List<String>> direct_peer_map) {
+        this.direct_peer_map = direct_peer_map;
+    }
 
     public void addPeerFromString(String parameters){
         String[] splits = parameters.split(" = ");
